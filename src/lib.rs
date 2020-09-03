@@ -12,6 +12,12 @@ pub struct Span {
 }
 
 impl Span {
+    pub fn new(start: f64, end: f64) -> Self {
+        Self { start, end }
+    }
+}
+
+impl Span {
     pub fn start(self) -> Duration {
         Duration::from_secs_f64(self.start)
     }
