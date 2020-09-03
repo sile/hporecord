@@ -30,11 +30,40 @@ pub struct SpanDef {
     pub name: String,
 }
 
+impl SpanDef {
+    pub fn new(name: impl Into<String>) -> Self {
+        Self { name: name.into() }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ParamDef {
     pub name: String,
     #[serde(flatten)]
     pub range: ParamRange,
+}
+
+impl ParamDef {
+    pub fn numerical(name: impl Into<String>, min: f64, max: f64) -> Self {
+        Self {
+            name: name.into(),
+            range: ParamRange::numerical(min, max),
+        }
+    }
+
+    pub fn log_numerical(name: impl Into<String>, min: f64, max: f64) -> Self {
+        Self {
+            name: name.into(),
+            range: ParamRange::log_numerical(min, max),
+        }
+    }
+
+    pub fn categorical(name: impl Into<String>, choices: Vec<String>) -> Self {
+        Self {
+            name: name.into(),
+            range: ParamRange::categorical(choices),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -71,6 +100,26 @@ pub enum ParamRange {
 }
 
 impl ParamRange {
+    fn numerical(min: f64, max: f64) -> Self {
+        Self::Numerical {
+            min,
+            max,
+            scale: Scale::Linear,
+        }
+    }
+
+    fn log_numerical(min: f64, max: f64) -> Self {
+        Self::Numerical {
+            min,
+            max,
+            scale: Scale::Log,
+        }
+    }
+
+    fn categorical(choices: Vec<String>) -> Self {
+        Self::Categorical { choices }
+    }
+
     pub fn min(&self) -> f64 {
         match self {
             Self::Numerical { min, .. } => *min,
@@ -99,6 +148,16 @@ pub struct ValueDef {
     #[serde(default, skip_serializing_if = "ValueRange::is_default")]
     pub range: ValueRange,
     pub direction: Direction,
+}
+
+impl ValueDef {
+    pub fn new(name: impl Into<String>, direction: Direction) -> Self {
+        Self {
+            name: name.into(),
+            range: ValueRange::default(),
+            direction,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -179,6 +238,7 @@ pub enum EvalState {
 pub struct EvalRecord {
     pub study: StudyId,
     pub trial: TrialId,
+    pub state: EvalState,
     pub spans: Vec<Span>,
 
     #[serde(with = "nullable_f64_vec")]
@@ -186,8 +246,6 @@ pub struct EvalRecord {
 
     #[serde(with = "nullable_f64_vec")]
     pub values: Vec<f64>,
-
-    pub state: EvalState,
 }
 
 mod nullable_f64_vec {
