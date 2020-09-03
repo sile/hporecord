@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 use std::time::Duration;
 
 pub type StudyId = String;
@@ -103,23 +104,23 @@ pub struct ValueDef {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ValueRange {
     #[serde(default = "neg_infinity", skip_serializing_if = "is_neg_infinity")]
-    pub start: f64,
+    pub min: f64,
 
     #[serde(default = "infinity", skip_serializing_if = "is_infinity")]
-    pub end: f64,
+    pub max: f64,
 }
 
 impl ValueRange {
     fn is_default(&self) -> bool {
-        self.start == std::f64::NEG_INFINITY && self.end == std::f64::INFINITY
+        self.min == std::f64::NEG_INFINITY && self.max == std::f64::INFINITY
     }
 }
 
 impl Default for ValueRange {
     fn default() -> Self {
         Self {
-            start: std::f64::NEG_INFINITY,
-            end: std::f64::INFINITY,
+            min: std::f64::NEG_INFINITY,
+            max: std::f64::INFINITY,
         }
     }
 }
@@ -158,7 +159,8 @@ pub enum Record {
 #[serde(rename_all = "kebab-case")]
 pub struct StudyRecord {
     pub id: StudyId,
-    pub name: String,
+    #[serde(default)]
+    pub attrs: BTreeMap<String, String>,
     pub spans: Vec<SpanDef>,
     pub params: Vec<ParamDef>,
     pub values: Vec<ValueDef>,
