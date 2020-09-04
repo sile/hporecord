@@ -7,8 +7,8 @@ pub type TrialId = u32;
 
 #[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct Span {
-    start: f64,
-    end: f64,
+    pub start: f64,
+    pub end: f64,
 }
 
 impl Span {
@@ -18,6 +18,7 @@ impl Span {
 }
 
 impl Span {
+    // TODO: remove
     pub fn start(self) -> Duration {
         Duration::from_secs_f64(self.start)
     }
@@ -211,6 +212,16 @@ fn is_infinity(v: &f64) -> bool {
 pub enum Direction {
     Minimize,
     Maximize,
+}
+
+impl Direction {
+    pub fn better(self, x: f64, y: f64) -> f64 {
+        if self == Direction::Minimize {
+            x.min(y)
+        } else {
+            x.max(y)
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
