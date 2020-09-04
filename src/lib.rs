@@ -240,6 +240,24 @@ pub enum EvalState {
     Infeasible,
 }
 
+impl EvalState {
+    pub const fn is_complete(self) -> bool {
+        matches!(self, Self::Complete)
+    }
+
+    pub const fn is_interm(self) -> bool {
+        matches!(self, Self::Interim)
+    }
+
+    pub const fn is_failed(self) -> bool {
+        matches!(self, Self::Failed)
+    }
+
+    pub const fn is_infeasible(self) -> bool {
+        matches!(self, Self::Infeasible)
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EvalRecord {
     pub study: StudyId,
