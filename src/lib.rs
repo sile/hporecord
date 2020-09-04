@@ -42,7 +42,7 @@ impl SpanDef {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ParamDef {
     pub name: String,
     #[serde(flatten)]
@@ -91,7 +91,7 @@ impl Default for Scale {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "kebab-case")]
 pub enum ParamRange {
     Numerical {
