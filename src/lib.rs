@@ -222,6 +222,14 @@ impl Direction {
             x.max(y)
         }
     }
+
+    pub const fn is_minimize(self) -> bool {
+        matches!(self, Self::Minimize)
+    }
+
+    pub const fn is_maximize(self) -> bool {
+        matches!(self, Self::Maximize)
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
