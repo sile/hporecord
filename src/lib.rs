@@ -53,17 +53,24 @@ pub struct ParamDef {
 }
 
 impl ParamDef {
-    pub fn numerical(name: impl Into<String>, min: f64, max: f64) -> Self {
+    pub fn continuous(name: impl Into<String>, min: f64, max: f64) -> Self {
         Self {
             name: name.into(),
-            range: ParamRange::numerical(min, max),
+            range: ParamRange::continuous(min, max),
         }
     }
 
-    pub fn log_numerical(name: impl Into<String>, min: f64, max: f64) -> Self {
+    pub fn log_continuous(name: impl Into<String>, min: f64, max: f64) -> Self {
         Self {
             name: name.into(),
-            range: ParamRange::log_numerical(min, max),
+            range: ParamRange::log_continuous(min, max),
+        }
+    }
+
+    pub fn discrete(name: impl Into<String>, min: f64, max: f64, step: f64) -> Self {
+        Self {
+            name: name.into(),
+            range: ParamRange::discrete(min, max, step),
         }
     }
 
@@ -100,6 +107,8 @@ pub enum ParamRange {
     Numerical {
         min: f64,
         max: f64,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        step: Option<f64>,
         #[serde(default, skip_serializing_if = "Scale::is_default")]
         scale: Scale,
     },
@@ -109,19 +118,30 @@ pub enum ParamRange {
 }
 
 impl ParamRange {
-    fn numerical(min: f64, max: f64) -> Self {
+    fn continuous(min: f64, max: f64) -> Self {
         Self::Numerical {
             min,
             max,
+            step: None,
             scale: Scale::Linear,
         }
     }
 
-    fn log_numerical(min: f64, max: f64) -> Self {
+    fn log_continuous(min: f64, max: f64) -> Self {
         Self::Numerical {
             min,
             max,
+            step: None,
             scale: Scale::Log,
+        }
+    }
+
+    fn discrete(min: f64, max: f64, step: f64) -> Self {
+        Self::Numerical {
+            min,
+            max,
+            step: Some(step),
+            scale: Scale::Linear,
         }
     }
 
