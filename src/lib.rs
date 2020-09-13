@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::time::Duration;
 
+pub mod io;
+
 pub type StudyId = String;
 pub type TrialId = u32;
 
