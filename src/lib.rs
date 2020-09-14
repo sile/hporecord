@@ -259,6 +259,7 @@ impl Direction {
 pub enum Record {
     Study(StudyRecord),
     Eval(EvalRecord),
+    // TODO: StudyEnd
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
