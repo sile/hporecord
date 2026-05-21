@@ -84,7 +84,9 @@ impl ParamDef {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "UPPERCASE")]
+#[derive(Default)]
 pub enum Scale {
+    #[default]
     Linear,
     Log,
 }
@@ -95,11 +97,6 @@ impl Scale {
     }
 }
 
-impl Default for Scale {
-    fn default() -> Self {
-        Self::Linear
-    }
-}
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "kebab-case")]
@@ -200,33 +197,33 @@ pub struct ValueRange {
 
 impl ValueRange {
     fn is_default(&self) -> bool {
-        self.min == std::f64::NEG_INFINITY && self.max == std::f64::INFINITY
+        self.min == f64::NEG_INFINITY && self.max == f64::INFINITY
     }
 }
 
 impl Default for ValueRange {
     fn default() -> Self {
         Self {
-            min: std::f64::NEG_INFINITY,
-            max: std::f64::INFINITY,
+            min: f64::NEG_INFINITY,
+            max: f64::INFINITY,
         }
     }
 }
 
 fn neg_infinity() -> f64 {
-    std::f64::NEG_INFINITY
+    f64::NEG_INFINITY
 }
 
 fn is_neg_infinity(v: &f64) -> bool {
-    *v == std::f64::NEG_INFINITY
+    *v == f64::NEG_INFINITY
 }
 
 fn infinity() -> f64 {
-    std::f64::INFINITY
+    f64::INFINITY
 }
 
 fn is_infinity(v: &f64) -> bool {
-    *v == std::f64::INFINITY
+    *v == f64::INFINITY
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -316,7 +313,6 @@ pub struct EvalRecord {
 
 mod nullable_f64_vec {
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
-    use std::f64::NAN;
 
     pub fn deserialize<'de, D>(deserializer: D) -> Result<Vec<f64>, D::Error>
     where
@@ -324,7 +320,7 @@ mod nullable_f64_vec {
     {
         let v: Vec<Option<f64>> = Deserialize::deserialize(deserializer)?;
         Ok(v.into_iter()
-            .map(|v| if let Some(v) = v { v } else { NAN })
+            .map(|v| v.unwrap_or(f64::NAN))
             .collect())
     }
 
