@@ -97,7 +97,6 @@ impl Scale {
     }
 }
 
-
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "kebab-case")]
 pub enum ParamRange {
@@ -319,9 +318,7 @@ mod nullable_f64_vec {
         D: Deserializer<'de>,
     {
         let v: Vec<Option<f64>> = Deserialize::deserialize(deserializer)?;
-        Ok(v.into_iter()
-            .map(|v| v.unwrap_or(f64::NAN))
-            .collect())
+        Ok(v.into_iter().map(|v| v.unwrap_or(f64::NAN)).collect())
     }
 
     pub fn serialize<S>(v: &[f64], serializer: S) -> Result<S::Ok, S::Error>
